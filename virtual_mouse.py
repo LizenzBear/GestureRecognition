@@ -1,52 +1,55 @@
 import cv2
 import mediapipe as mp
 import pyautogui
+import numpy as np
 
-# Initialisieren von MediaPipe Hands
+# Initialize MediaPipe Hands model
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5)
-mp_drawing = mp.solutions.drawing_utils
+hands = mp_hands.Hands(max_num_hands=1)
+mp_draw = mp.solutions.drawing_utils
 
-# Bildschirmauflösung herausfinden für die Maussteuerung
-screen_width, screen_height = pyautogui.size()
+cap = cv2.VideoCapture(0)  # Use the default webcam
 
-# Kameracapture starten
-cap = cv2.VideoCapture(0)
+screen_width, screen_height = pyautogui.size()  # Get the size of the screen
+frame_reduction = 100  # Frame reduction to manage sensitivity
 
-while cap.isOpened():
+# Function to calculate the distance between two points
+def calculate_distance(p1, p2):
+    return np.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2)
+
+while True:
     success, image = cap.read()
     if not success:
-        print("Ignoriere leeres Kamerabild.")
         continue
 
-    # Bild für die Verarbeitung vorbereiten
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     results = hands.process(image)
 
-    # Ergebnis zeichnen
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
-            # Hier könnten Sie zusätzliche Logik implementieren, um spezifische Gesten zu erkennen
-            # Beispiel: Erkennung, ob die Hand geschlossen ist, um einen Klick zu simulieren
-            
-            # Mausbewegung basierend auf der Position des Handgelenks (Landmark 0)
-            wrist_landmark = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
-            # Umwandlung in Bildschirmkoordinaten
-            x = int(wrist_landmark.x * screen_width)
-            y = int(wrist_landmark.y * screen_height)
-            pyautogui.moveTo(x, y)
+            # Get the tip of the index finger and the tip of the thumb
+            index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+            thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
+            x, y = int(index_tip.x * image.shape[1]), int(index_tip.y * image.shape[0])
 
-            # Zeichnen der Handlandmarks im Bild
-            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            # Convert coordinates to screen size
+            screen_x = np.interp(x, (frame_reduction, image.shape[1] - frame_reduction), (0, screen_width))
+            screen_y = np.interp(y, (frame_reduction, image.shape[0] - frame_reduction), (0, screen_height))
 
-    # Bild anzeigen
-    cv2.imshow('MediaPipe Hands', image)
-    
-    # Beenden mit ESC
-    if cv2.waitKey(5) & 0xFF == 27:
+            # Move the mouse cursor
+            pyautogui.moveTo(screen_x, screen_y)
+
+            # Calculate the distance between index finger tip and thumb tip
+            distance = calculate_distance(index_tip, thumb_tip)
+
+            # Click if the distance is small enough
+            if distance < 0.05:  # Adjust the threshold based on testing
+                pyautogui.click()
+
+            mp_draw.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+    cv2.imshow("Virtual Mouse", image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
