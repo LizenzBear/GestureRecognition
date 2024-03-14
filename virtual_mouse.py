@@ -28,6 +28,7 @@ while True:
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             # Get the tip of the index finger and the tip of the thumb
+            print(hand_landmarks.landmark)
             index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
             thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
             x, y = int(index_tip.x * image.shape[1]), int(index_tip.y * image.shape[0])
