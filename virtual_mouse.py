@@ -28,10 +28,12 @@ while True:
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             # Get the tip of the index finger and the tip of the thumb
-            print(hand_landmarks.landmark)
+            # Use the wrist landmark for tracking the cursor
             index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
             thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-            x, y = int(index_tip.x * image.shape[1]), int(index_tip.y * image.shape[0])
+            wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
+
+            x, y = int(wrist.x * image.shape[1]), int(wrist.y * image.shape[0])
 
             # Convert coordinates to screen size
             screen_x = np.interp(x, (frame_reduction, image.shape[1] - frame_reduction), (0, screen_width))
@@ -55,4 +57,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
