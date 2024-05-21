@@ -1,5 +1,7 @@
 import mediapipe as mp
 import cv2
+import pyautogui
+import time
 
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
@@ -9,15 +11,21 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 
 video = cv2.VideoCapture(0)
 
+# Festlegen der Fensterposition
+cv2.namedWindow("Video Feed", cv2.WINDOW_NORMAL)
+cv2.moveWindow("Video Feed", 0, 0)
 
-def print_result(
-    result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int
-):
-    print(result.gestures)
+def print_result(result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
+    gestures = result.gestures
+    print(gestures[0].index)
+    # print(result.gestures[0])
 
+    if "click" in gestures:  
+        pyautogui.click()  
+        time.sleep(2)  
 
 options = GestureRecognizerOptions(
-    base_options=BaseOptions(model_asset_path="rock_paper_scissors.task"),
+    base_options=BaseOptions(model_asset_path="C:/Users/Moritz/OneDrive/Dokumente/KI/GestureRecognition/Custom_Model/rock_paper_scissors.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result,
 )

@@ -17,8 +17,7 @@ while cap.isOpened():
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # Process the image and detect the pose
-    results = pose.process(image)
-
+    results = pose.process(image),
     # Draw the pose annotations on the image
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
