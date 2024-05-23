@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import pyautogui
 import time
+import numpy as np
 
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
@@ -17,27 +18,47 @@ cv2.moveWindow("Video Feed", 0, 0)
 
 def print_result(result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
     gestures = result.gestures
-    print(gestures[0].index)
-    # print(result.gestures[0])
-
-    if "click" in gestures:  
-        pyautogui.click()  
-        time.sleep(2)  
+    print(gestures)
+    for gesture in gestures:
+        x = [category.category_name for category in gesture]
+        if x[0] == "click":
+            pyautogui.click()
+            time.sleep(2)
 
 options = GestureRecognizerOptions(
-    base_options=BaseOptions(model_asset_path="C:/Users/Moritz/OneDrive/Dokumente/KI/GestureRecognition/Custom_Model/rock_paper_scissors.task"),
+    base_options=BaseOptions(model_asset_path="./rock_paper_scissors.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result,
 )
 
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(max_num_hands=1)
+mp_draw = mp.solutions.drawing_utils
+
 timestamp = 0
+frame_reduction = 100  # Frame reduction to manage sensitivity
+screen_width, screen_height = pyautogui.size()  # Get the size of the screen
 with GestureRecognizer.create_from_options(options) as recognizer:
     while video.isOpened():
         ret, frame = video.read()
+        frame = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
+        results = hands.process(frame)
 
         if not ret:
             print("Ignoring empty frame")
             break
+
+        if results.multi_hand_landmarks:
+            for hand_landmarks in results.multi_hand_landmarks:
+                wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
+                x, y = int(wrist.x * frame.shape[1]), int(wrist.y * frame.shape[0])
+
+                # Convert coordinates to screen size
+                screen_x = np.interp(x, (frame_reduction, frame.shape[1] - frame_reduction), (0, screen_width))
+                screen_y = np.interp(y, (frame_reduction, frame.shape[0] - frame_reduction), (0, screen_height))
+
+                # Move the mouse cursor
+                pyautogui.moveTo(screen_x, screen_y)
 
         timestamp += 1
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
