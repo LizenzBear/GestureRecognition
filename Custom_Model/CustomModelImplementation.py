@@ -16,14 +16,19 @@ video = cv2.VideoCapture(0)
 cv2.namedWindow("Video Feed", cv2.WINDOW_NORMAL)
 cv2.moveWindow("Video Feed", 0, 0)
 
+click_cooldown = 0.5
+last_click_time = 0
+
 def print_result(result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
+    global last_click_time
     gestures = result.gestures
     for gesture in gestures:
-        print(gesture)
-        x = [category.category_name for category in gesture]
-        if x[0] == "click":
-            pyautogui.click()
-            time.sleep(2)
+        gesture_name = [category.category_name for category in gesture]
+        if gesture_name[0] == "click":
+            current_time = time.time()
+            if current_time - last_click_time >= click_cooldown:
+                pyautogui.click()
+                last_click_time = current_time
 
 options = GestureRecognizerOptions(
     base_options=BaseOptions(model_asset_path="./rock_paper_scissors.task"),
@@ -38,6 +43,7 @@ mp_draw = mp.solutions.drawing_utils
 timestamp = 0
 frame_reduction = 200  # Frame reduction to manage sensitivity
 screen_width, screen_height = pyautogui.size()  # Get the size of the screen
+
 with GestureRecognizer.create_from_options(options) as recognizer:
     try:
         while video.isOpened():
@@ -69,6 +75,7 @@ with GestureRecognizer.create_from_options(options) as recognizer:
             cv2.imshow("Video Feed", frame)
             if cv2.waitKey(5) & 0xFF == 27:
                 break
+
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
