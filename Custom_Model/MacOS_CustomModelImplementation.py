@@ -4,6 +4,9 @@ import pyautogui
 import time
 import numpy as np
 
+pyautogui.FAILSAFE = False
+
+
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
 GestureRecognizerOptions = mp.tasks.vision.GestureRecognizerOptions
@@ -30,8 +33,17 @@ def print_result(result: GestureRecognizerResult, output_image: mp.Image, timest
                 pyautogui.click()
                 last_click_time = current_time
 
+
+f = open("./rock_paper_scissors.task", mode="rb")
+ 
+# Reading file data with read() method
+data = f.read()
+# Closing the opened file
+f.close()
+
+
 options = GestureRecognizerOptions(
-    base_options=BaseOptions(model_asset_path="./rock_paper_scissors.task"),
+    base_options=BaseOptions(model_asset_buffer=data),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result,
 )
@@ -41,7 +53,7 @@ hands = mp_hands.Hands(max_num_hands=1)
 mp_draw = mp.solutions.drawing_utils
 
 timestamp = 0
-frame_reduction = 200  # Frame reduction to manage sensitivity
+frame_reduction = 100  # Frame reduction to manage sensitivity
 screen_width, screen_height = pyautogui.size()  # Get the size of the screen
 
 with GestureRecognizer.create_from_options(options) as recognizer:
