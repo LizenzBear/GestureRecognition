@@ -16,7 +16,7 @@ Mediapipe ist eine Open-Source-Bibliothek von Google, die Werkzeuge für die Imp
 
 Mediapipe wird von uns verwendet um ein digitales Skelett unserer Hand aus dem Live-Video der Webcam herauszubekommen. (Siehe Abbildung) 
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/f8ba831a-0306-41ef-8311-7c0a48686d22.png)
+![Untitled](Assets/f8ba831a-0306-41ef-8311-7c0a48686d22.png)
 
 Durch Mediapipe kann man zusätzlich auch die Koordinaten jeder Punkte (Siehe Abbildung rote Punkte) herauslesen, was uns das trainieren leichter macht, da wir nicht auf Grundlage von Bildern sondern auf Grundlage von Koordinaten trainieren können. 
 
@@ -24,9 +24,9 @@ Durch Mediapipe kann man zusätzlich auch die Koordinaten jeder Punkte (Siehe Ab
 
 Mediapipe ist nicht nur für das Erkennen einer Hand geeignet, sondern kann auch den ganzen Körper erkennen oder detailliert das Gesicht. (Siehe Abbildungen)
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/6aac48be-3f11-4005-a37b-47cf958309fc.png)
+![Untitled](Assets/6aac48be-3f11-4005-a37b-47cf958309fc.png)
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/c7d00044-60c6-40b9-b64d-bf5b666c5827.png)
+![Untitled](Assets/c7d00044-60c6-40b9-b64d-bf5b666c5827.png)
 
 **Anwendungsbeispiele:**
 
@@ -95,7 +95,7 @@ start_number = 1
 
 Dieses Script macht nichts anders als bei jedem Anschlag auf der Leertaste ein Foto mit der Webcam zu machen um diese dann nummeriert in das vorgegebene Verzeichnis zu speichern. (Siehe Abbildung)
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/f764bb3b-c59a-4c7b-bed8-a34669492e91.png)
+![Untitled](Assets/f764bb3b-c59a-4c7b-bed8-a34669492e91.png)
 
 Durch diese strukturierten Daten lässt sich das Modell dann gut trainieren. Insgesamt haben wir uns so jeweils für “click” und “drag” ungefähr 200 Bilder aufgenommen. Das hat soweit gereicht um eine sehr hohe Genauigkeit zu erreichen. Bräuchte man allerdings mehr kann man entweder mehr aufnehmen oder allerdings “Data Augmentation” anwenden.
 
@@ -156,9 +156,9 @@ model = gesture_recognizer.GestureRecognizer.create(
 )
 ```
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/Untitled.png)
+![Untitled](Assets/Untitled.png)
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/Untitled%201.png)
+![Untitled](Assets/Untitled%201.png)
 
 **Modell evaluieren**
 
@@ -167,7 +167,7 @@ loss, acc = model.evaluate(test_data, batch_size=1)
 print(f"Test loss:{loss}, Test accuracy:{acc}")
 ```
 
-![Untitled](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/Untitled%202.png)
+![Untitled](Assets/Untitled%202.png)
 
 Nach diesem Durchgang hat das Modell also eine Genauigkeit von 96,43%. 
 
@@ -399,10 +399,10 @@ Um die Funktion des Codes vollständig zu garantieren sollte man so gut wie mög
 
 Folgende 2 Gesten: 
 
-![Click](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/0d65e3de-fba9-4fb4-b168-9daa61ea893d.png)
+![Click](Assets/0d65e3de-fba9-4fb4-b168-9daa61ea893d.png)
 
 Click
 
-![Drag](Gesture%20Recognition%20e17c42256bf147f1b1f9ded31386502a/c23e761b-8ce0-4524-86e7-02717fbc8416.png)
+![Drag](Assets/c23e761b-8ce0-4524-86e7-02717fbc8416.png)
 
 Drag
