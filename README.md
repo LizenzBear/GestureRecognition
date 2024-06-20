@@ -3,7 +3,7 @@
 # Setup
 
 ```bash
-git clone https://github.com/LizenzBear/GestureRecognition/tree/main
+git clone https://github.com/LizenzBear/GestureRecognition
 cd GestureRecognition
 python3 -m pip install -r requirements.txt
 python3 {OS}_CustomModelImplementation.py # With OS being MacOS (= MacOS & Linux) or Windows
